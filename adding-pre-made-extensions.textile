@@ -1,0 +1,87 @@
+h1. Adding pre-made extensions to Radiant CMS
+
+Radiant CMS is all about making a beautiful and simple content management system. Most people feel comfortable with the Radiant interface from the first time they see it - not least due to the complete lack of any advanced features to disturb the simplicity. But once you start using Radiant for a real web site of any size, the lack of features becomes a problem. Such simple task as changing the ordering of pages or uploading images is not built into Radiant, but luckily this is easily remedied by installing the appropriate extensions.
+
+While future articles will explain how to build your own Radiant extensions, this article is essentially a catalogue of some useful general-purpose Radiant extensions. The extensions are ordered from how important the author considers them to be, starting with the extensions that should be part of virtually any Radiant installation. See the boxes for instructions on how to install extensions and on how to try out the demo application built for this article. The extensions have all been tested using Radiant CMS 0.7.1 from a gem install with an SQLite database.
+
+h2. Reorder
+
+If you build menus dynamically from the pages created in Radiant (e.g. by using Navigation Tags mentioned below), the Reorder extension is a must. The extension adds a database field to keep track of the ordering of pages in the page tree, and it adds arrows in the user interface to let the web master change this ordering. It also ensures that the pages will be returned in the decided order by default.
+
+h2. Paperclipped
+
+Since Radiant does not include any asset handling, several extensions exists to allow the web master to upload, manage and display images, videos, documents and other types of files. The Page Attachment extension - based on the attachment_fu plugin - is widely used and supported, but I recommend the newer and more user-friendly Paperclipped extension for this task. It is based on the paperclip plugin, and it allows the web master to easily upload and insert assets while editing a page. Further, it adds an "Assets" tab providing an overview of all uploaded assets and the ability to filter and search through assets.
+
+h2. Copy/Move
+
+The Copy/Move extension is, like Reorder and Paperclipped, an extension you can hardly go without on a production web site. It allows the webmaster to copy a page, with or without children or to move the page somewhere else in the page tree. Without this extension the web master is reduced to manually copy page content when the site structure is refactored, which is not something anyone should endure.
+
+h2. Navigation Tags
+
+While these first extensions was for the benefit of the web master, we now move to some extensions aimed against the developer(s) of the web site. You can generate static navigation menus in Radiant using the built-in <r:navigation> tag, and you can also generate a menu that changes dynamically with the page tree using a variety of Radius-tags. The former approach is not well suited unless the web master knows where and how to edit the static menu, and the latter might be a bit complicated for newcomers to Radiant. One solution is to the Navigation Tags extension. It adds a <r:nav> tag which will, taking given options into account, render pages on a certain level in the page tree, or the entire page tree if need be.
+
+h2. Nested Layouts
+
+This extension will help developers to stay DRY (Don't Repeat Yourself) when building the website. Any site beyond the very basic will have certain variations to the layout of different pages and sections, and while this can be solved by clever use of page parts and snippets to a certain degree, making multiple Radiant layouts will often be a more intuitive solution - epecially from the point of view of the web master. Without Nested Layouts you will need to seperate any code shared between layouts into snippets that you include in each layout, but with this extension you can make a master layout with the basic markup required by all pages, and then create several child layouts which variations in the design.
+
+h2. Styles and Scripts
+
+Radiant allows us to work with pages, snippets and layouts, but where do we put our stylesheets and javascripts? The custom in Radiant is to simply add them as pages in the page tree with layout that sets the content type the either text/css or text/javascript. You can see an example of this approach if you choose one the templates avaible when running rake db:bootstrap on a vanilla Radiant install. Another approach is to manage these file statically and put them in their respective directories within the public directory. A third approach is to use the Styles and Scripts extension which adds "CSS" and "JS" tabs where stylesheets and javascripts can be managed independently of the content and layouts. It also provides tags for easily referring to these styles and scripts from layouts and pages. As this is written, the Styles and Scripts extension in the extension registry is not compatible with the newest versions of Radiant. Instead, the Radiant core team's fork of the extension at http://github.com/radiant/radiant-sns-extension/ should be used.
+
+h2. Concurrent Draft
+
+Radiant's built-in workflow support is limited to setting the status of each page to either draft, reviewed, published and hidden, and this is enough in many cases. However, once a web site is running it is not possible to work on a new draft of a page while still having the old page displayed. The Concurrent Draft extension changes this and allows the web master to work on a draft and scheduling when the new version of the page should be promoted to be visible. The extension does not add real versioning of pages, but it improves the workflow to be more suitable for medium and large web sites.
+
+h2. Share Layouts
+
+The last extensions mentioned in this article are of a more technical character. You can add you own models, controllers and views to a Radiant web site, preferably by building your own extension specific to your site, something that will be explained in a future issue of Rails Magazine. Once you start building your own dynamic pages running along-side your static Radiant pages, you will face the need to use the same layouts across all pages, dynamic or static. Share Layouts allows you to refer to a Radiant layout instead of Rails layout in your custom controllers by means of the radiant_layout 'layout name' command. This way, you still have full control over the layouts and menus from Radiant, even for your dynamic pages.
+
+h2. Exception Notication
+
+Once you have your Radiant site in production, you will want to be notified of any errors that occurs on the site. Even if you haven't added any custom code to Radiant, a lot of things can still go wrong. The Exception Notication extension wraps the widely used plugin of the same name, but adds the Internal Error page type, which gives you full control of the page shown when errors occurs from Radiant. The extension requires ActionMailer to be enabled (disabled by default by Radiant) and it needs to know where to send e-mails to. This is all explained in detail in the readme file bundled with the extension.
+
+h2. Settings
+
+Radiant has a database table where it stores configuration such as the title displayed in the administration pages and what parts to add add per default to new pages. Many extensions also adds their configuration to this table. Normally you would have to change these settings using the console, but the Settings extension adds a tab where the configuration can be edited directly from the browser. This makes life easier if you have need to change configuration on a regular basis, or want the web master to be able to change them.
+
+There are more great extensions out there, many of which adds specific functionality to Radiant such as managing a picture gallery or sending out newsletters. Some can be found at the Radiant extension registry at http://ext.radiantcms.org/, but I also recommend doing a search for "radiant extension" on Github in your search for useful extensions.
+
+
+
+
+h2. BOX: Installing a Radiant extension
+
+To install a Radiant extension, you will need to have a console open at the root of Radiant CMS-based Rails application. Extensions that are registered in the Radiant CMS Extension registry can be installed as easily as a Rails plugin with the command:
+
+script/extension install [extension name]
+
+This will add the extension to your application (as a submodule, if you use Git), will run any database migrations the extension might have and let it copy any images, javascripts or stylesheet to the public directory it might need to refer. Remember to restart the Rails application to get the extension loaded.
+
+For extensions not in the registry, you will need to manually download/clone them into the /vendor/extensions/[extension name] and run these commands:
+
+rake radiant:extensions:[extension name]:migrate
+rake radiant:extensions:[extension name]:update
+
+Once you deploy your application, you will probably also need run migrations for all your installed extensions (unless you start out with a clone of your development database). This is done by running this command on the server:
+
+rake RAILS_ENV=production db:migrate:extensions
+
+h2. BOX: Try it out
+
+You can easily try all the extensions out and see them in action by cloning the demo application that has been made available on Github. If you have Git installed, you can simply clone the application as shown below - if not, you can download the application from the page at http://github.com/RSpace/railsmag-radiant/tree/article-1. You will need to have the Radiant gem and the SQLite gem installed (the latter is not necessary if you know how to change the application to use another database system), which is also shown below. Finally, you will need to bootstrap Radiant, migrate all the extensions and start the server:
+
+gem install radiant
+gem install sqlite3-ruby
+
+git clone git://github.com/RSpace/railsmag-radiant.git
+git submodule init
+git submodule update
+
+At this point we have the Radiant application locally, but the database is not initialized. One little snag with Radiant extensions is that they most often need to be disabled in order for Radiant to be able bootstrap the database. This is because Radiant will load the extensions before executing any rake tasks, and extensions relying on something in the database, typically the config-table, will fail. So open config/environment.rb and incomment config.extensions = []. Now bootstrap the database:
+
+rake db:bootstrap
+
+Remove or outcomment the line again in config/enviroment.rb. Migrate all the extensions, and finally; start the server and open the site in your browser:
+
+rake db:migrate:extensions
+script/server

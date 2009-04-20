@@ -1,0 +1,1 @@
+Casper Fabricius is freelance Ruby on Rails developer working out of Copenhagen, Denmark with 8 years of web development experience and 3 happy years with Rails. He is passionate about the web, the agile approach and the Ruby community, and says wise things at his weblog at http://casperfabricius.com and stupid things at Twitter as 'fabricius'.
